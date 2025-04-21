@@ -1,0 +1,4 @@
+spring:
+  application:
+    name: NAI07
+outGame: src\main\resources\outGame.csv
