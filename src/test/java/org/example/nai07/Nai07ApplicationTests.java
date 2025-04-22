@@ -46,17 +46,17 @@ class Nai07ApplicationTests {
 
     @Test
     void testPredict(){
-//        rainy,mild,high,TRUE,no
-//        overcast,hot,normal,FALSE,yes
-
         DataSet dt = new DataSet(Outlook.RAINY, Temperature.MILD, Humidity.HIGH, Windy.TRUE);
         DataSet dt1 = new DataSet(Outlook.OVERCAST, Temperature.HOT, Humidity.NORMAL, Windy.FALSE);
         DataSet dt2 = new DataSet(Outlook.SUNNY,Temperature.HOT ,Humidity.HIGH ,Windy.FALSE );
 
         fileService.readFile();
         naiveBayesClassifier.calculateProbabilities();
+        naiveBayesClassifier.setApplySmoothingAll(true);
 
+        //        rainy,mild,high,TRUE,no
         assertFalse(naiveBayesClassifier.predict(dt));
+        //        overcast,hot,normal,FALSE,yes
         assertTrue(naiveBayesClassifier.predict(dt1));
         assertFalse(naiveBayesClassifier.predict(dt2));
     }

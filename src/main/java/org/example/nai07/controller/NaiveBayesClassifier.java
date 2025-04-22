@@ -20,10 +20,11 @@ public class NaiveBayesClassifier {
     private final Map<DataType, Integer> probabilitiesNo;
     private int playYesTotal = 0;
     private int playNoTotal = 0;
+    private boolean applySmoothingAll = false;
 
     public NaiveBayesClassifier(FileService fileService,
                                 @Qualifier("yesMap") Map<DataType, Integer> probabilitiesYes,
-                                @Qualifier("noMap")Map<DataType, Integer> probabilitiesNo){
+                                @Qualifier("noMap") Map<DataType, Integer> probabilitiesNo){
         this.fileService = fileService;
         this.probabilitiesYes = probabilitiesYes;
         this.probabilitiesNo = probabilitiesNo;
@@ -65,6 +66,7 @@ public class NaiveBayesClassifier {
     public boolean predict(DataSet dataSet){
         double resYes = getProbability(probabilitiesYes,dataSet,playYesTotal);
         double resNo = getProbability(probabilitiesNo,dataSet,playNoTotal);
+        System.out.println("Res Yes: {" + resYes + "} Res No: {" + resNo + "}");
 
         return resYes > resNo;
     }
@@ -72,25 +74,29 @@ public class NaiveBayesClassifier {
     public double getProbability(Map<DataType, Integer> map,
                                  DataSet dataSet,
                                  int total){
-        double outlook = (double)
-                (map.getOrDefault(dataSet.getOutlook(),0) + 1)
-                /
-                (total+ Outlook.values().length);
+        double outlook = simpleSmoothing(
+                map.getOrDefault(dataSet.getOutlook(),0),
+                total,
+                Outlook.values().length
+        );
 
-        double temperature = (double)
-                (map.getOrDefault(dataSet.getTemperature(),0)+1)
-                /
-                (total+ Temperature.values().length);
+        double temperature = simpleSmoothing(
+                map.getOrDefault(dataSet.getTemperature(),0),
+                total,
+                Temperature.values().length
+        );
 
-        double humidity = (double)
-                (map.getOrDefault(dataSet.getHumidity(),0)+1)
-                /
-                (total+ Humidity.values().length);
+        double humidity = simpleSmoothing(
+                map.getOrDefault(dataSet.getHumidity(),0),
+                total,
+                Humidity.values().length
+        );
 
-        double windy = (double)
-                (map.getOrDefault(dataSet.getWindy(),0)+1)
-                /
-                (total+ Windy.values().length);
+        double windy = simpleSmoothing(
+                map.getOrDefault(dataSet.getWindy(),0),
+                total,
+                Windy.values().length
+        );
 
         double play = (double)total/(playYesTotal+playNoTotal);
 
@@ -101,6 +107,23 @@ public class NaiveBayesClassifier {
                 windy,
                 play
         );
+    }
+
+    public double simpleSmoothing(int valueFromMap,
+                                  int totalDenominator,
+                                  int denominatorSmoothing){
+        if(!applySmoothingAll || valueFromMap == 0){
+            System.out.println("Smoothing is applied to a single attribute");
+            return (double)
+                    (valueFromMap + 1)
+                    /
+                    (totalDenominator+denominatorSmoothing);
+        }
+
+        return (double)
+                (valueFromMap)
+                /
+                (totalDenominator);
     }
 
     public double multiplier(double outlook,
@@ -131,5 +154,9 @@ public class NaiveBayesClassifier {
 
     public Map<DataType, Integer> getProbabilitiesNo() {
         return probabilitiesNo;
+    }
+
+    public void setApplySmoothingAll(boolean applySmoothingAll){
+        this.applySmoothingAll = applySmoothingAll;
     }
 }
