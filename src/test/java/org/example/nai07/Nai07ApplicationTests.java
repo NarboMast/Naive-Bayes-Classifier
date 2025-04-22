@@ -52,7 +52,7 @@ class Nai07ApplicationTests {
 
         fileService.readFile();
         naiveBayesClassifier.calculateProbabilities();
-        naiveBayesClassifier.setApplySmoothingAll(true);
+//        naiveBayesClassifier.setApplySmoothingAll(true);
 
         //        rainy,mild,high,TRUE,no
         assertFalse(naiveBayesClassifier.predict(dt));

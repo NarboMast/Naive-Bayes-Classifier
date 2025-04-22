@@ -112,8 +112,8 @@ public class NaiveBayesClassifier {
     public double simpleSmoothing(int valueFromMap,
                                   int totalDenominator,
                                   int denominatorSmoothing){
-        if(!applySmoothingAll || valueFromMap == 0){
-            System.out.println("Smoothing is applied to a single attribute");
+        if(applySmoothingAll || valueFromMap == 0){
+            System.out.println("Smoothing");
             return (double)
                     (valueFromMap + 1)
                     /
