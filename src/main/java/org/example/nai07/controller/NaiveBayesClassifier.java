@@ -1,9 +1,6 @@
 package org.example.nai07.controller;
 
-import org.example.nai07.enums.Humidity;
-import org.example.nai07.enums.Outlook;
-import org.example.nai07.enums.Temperature;
-import org.example.nai07.enums.Windy;
+import org.example.nai07.enums.*;
 import org.example.nai07.model.DataSet;
 import org.example.nai07.model.DataType;
 import org.example.nai07.services.FileService;
@@ -66,7 +63,6 @@ public class NaiveBayesClassifier {
     public boolean predict(DataSet dataSet){
         double resYes = getProbability(probabilitiesYes,dataSet,playYesTotal);
         double resNo = getProbability(probabilitiesNo,dataSet,playNoTotal);
-        System.out.println("Res Yes: {" + resYes + "} Res No: {" + resNo + "}");
 
         return resYes > resNo;
     }
@@ -154,6 +150,10 @@ public class NaiveBayesClassifier {
 
     public Map<DataType, Integer> getProbabilitiesNo() {
         return probabilitiesNo;
+    }
+
+    public FileService getFileService(){
+        return fileService;
     }
 
     public void setApplySmoothingAll(boolean applySmoothingAll){
